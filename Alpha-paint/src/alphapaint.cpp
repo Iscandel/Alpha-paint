@@ -83,7 +83,7 @@ void AlphaPaint::onMouseMoved(const QPoint& pos)
 		std::ostringstream oss;
 		oss << alpha;
 	
-		ui.myEditAlpha->setText(QString::fromStdString(oss.str()));
+		ui.myEditAlpha->setText(QString::number(alpha));
 	}
 }
 
@@ -91,7 +91,7 @@ void AlphaPaint::onMousePaint(const QPoint& oldPos, const QPoint& pos)
 {
 	if (myImage.rect().contains(pos))
 	{
-		QImage alphaImg = myImage.alphaChannel();
+		//QImage alphaImg = myImage.alphaChannel();
 		//QImage image = pix->toImage();
 		QRgb rgba = myImage.pixel(pos);
 		int alpha = ui.mySliderAlphaValue->value();
@@ -108,6 +108,8 @@ void AlphaPaint::onMousePaint(const QPoint& oldPos, const QPoint& pos)
 		//myImage.setAlphaChannel(alphaImg);
 
 		ui.myLabelImage->repaint();
+		affectPixmap(ui.myButtonShowAlpha->isChecked());
+		//ui.myLabelImage->setPixmap(QPixmap::fromImage(myImage));
 
 		std::ostringstream oss;
 		oss << alpha;
@@ -119,8 +121,16 @@ void AlphaPaint::onMousePaint(const QPoint& oldPos, const QPoint& pos)
 
 void AlphaPaint::onButtonAlpha(bool clicked)
 {
+	affectPixmap(clicked);
+	
+	//ui.myLabelImage->adjustSize();
+	//ui.myLabelImage->reset();
+}
+
+void AlphaPaint::affectPixmap(bool alpha)
+{
 	const QPixmap* pix = ui.myLabelImage->pixmap();
-	if (clicked)
+	if (alpha)
 	{
 		//QImage image = pix->toImage();
 		QImage alpha = myImage.alphaChannel();
@@ -130,25 +140,16 @@ void AlphaPaint::onButtonAlpha(bool clicked)
 	else
 	{
 		ui.myLabelImage->setPixmap(QPixmap::fromImage(myImage));
-		
 	}
-	
-	//ui.myLabelImage->adjustSize();
-	//ui.myLabelImage->reset();
 }
 
 void AlphaPaint::onSliderValueChanged(int value)
 {
-	std::ostringstream oss;
-	oss << value;
-	std::cout << oss.str() << std::endl;
-	
 	//ui.mySliderAlphaValue->setStatusTip(QString::fromStdString(oss.str()));
 	//ui.mySliderAlphaValue->update();
 	//ui.mySliderAlphaValue->repaint();
 	//ui.statusBar->setStatusTip(QString::fromStdString(oss.str()));
 	//ui.statusBar->repaint();
-	myStatusLabel->setText(QString::fromStdString(oss.str()));
+	myStatusLabel->setText(QString::number(value));
 	myStatusLabel->repaint();
-	
 }

@@ -12,6 +12,8 @@ class AlphaPaint : public QMainWindow
 public:
     AlphaPaint(QWidget *parent = Q_NULLPTR);
 
+	void affectPixmap(bool alpha);
+
 	//bool eventFilter(QObject* object, QEvent* event);
 
 public slots:
