@@ -48,7 +48,7 @@ void AlphaPaint::openFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this,
 		tr("Image path"), "",
-		tr("Image file (*.jpg, *.jpeg, *.png, *.bmp);;All Files (*)"));
+		tr("Image file (*.jpg *.jpeg *.png *.bmp);;All Files (*)"));
 	if (fileName != "")
 	{
 		myImage.load(fileName);
