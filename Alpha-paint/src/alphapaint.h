@@ -20,9 +20,12 @@ public slots:
 	void onMouseMoved(const QPoint& pos);
 	void onButtonAlpha(bool clicked);
 	void onMousePaint(const QPoint& oldPos, const QPoint& pos);
+	void onSliderValueChanged(int value);
 
 private:
     Ui::AlphapaintClass ui;
+
+	QLabel* myStatusLabel;
 	
 	QImage myImage;
 };

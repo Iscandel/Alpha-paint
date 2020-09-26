@@ -20,6 +20,9 @@ AlphaPaint::AlphaPaint(QWidget *parent)
 	connect(ui.myLabelImage, SIGNAL(signalMouseMoved(const QPoint&)), this, SLOT(onMouseMoved(const QPoint&)));
 	connect(ui.myLabelImage, SIGNAL(signalMousePaint(const QPoint&, const QPoint&)), this, SLOT(onMousePaint(const QPoint&, const QPoint&)));
 	connect(ui.myButtonShowAlpha, SIGNAL(clicked(bool)), this, SLOT(onButtonAlpha(bool)));
+	connect(ui.mySliderAlphaValue, SIGNAL(sliderMoved(int)), this, SLOT(onSliderValueChanged(int)));
+
+	myStatusLabel = new QLabel(ui.statusBar);
 
 	//myProgress = ProgressDialog::ptr(new ProgressDialog);
 
@@ -91,7 +94,7 @@ void AlphaPaint::onMousePaint(const QPoint& oldPos, const QPoint& pos)
 		QImage alphaImg = myImage.alphaChannel();
 		//QImage image = pix->toImage();
 		QRgb rgba = myImage.pixel(pos);
-		int alpha = 128;
+		int alpha = ui.mySliderAlphaValue->value();
 		QPainter painter(&myImage);
 		QRgb newRgba = qRgba(qRed(rgba), qGreen(rgba), qBlue(rgba), alpha);
 		//painter.setOpacity(alpha);
@@ -132,4 +135,20 @@ void AlphaPaint::onButtonAlpha(bool clicked)
 	
 	//ui.myLabelImage->adjustSize();
 	//ui.myLabelImage->reset();
+}
+
+void AlphaPaint::onSliderValueChanged(int value)
+{
+	std::ostringstream oss;
+	oss << value;
+	std::cout << oss.str() << std::endl;
+	
+	//ui.mySliderAlphaValue->setStatusTip(QString::fromStdString(oss.str()));
+	//ui.mySliderAlphaValue->update();
+	//ui.mySliderAlphaValue->repaint();
+	//ui.statusBar->setStatusTip(QString::fromStdString(oss.str()));
+	//ui.statusBar->repaint();
+	myStatusLabel->setText(QString::fromStdString(oss.str()));
+	myStatusLabel->repaint();
+	
 }
