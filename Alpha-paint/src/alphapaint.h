@@ -16,6 +16,9 @@ public:
 
 	//bool eventFilter(QObject* object, QEvent* event);
 
+protected:
+	void keyReleaseEvent(QKeyEvent* event) override;
+
 public slots:
 	void openFile();
 	void onMouseDragged(const QPointF& offset);

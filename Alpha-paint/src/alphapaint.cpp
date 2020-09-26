@@ -21,6 +21,7 @@ AlphaPaint::AlphaPaint(QWidget *parent)
 	connect(ui.myLabelImage, SIGNAL(signalMousePaint(const QPoint&, const QPoint&)), this, SLOT(onMousePaint(const QPoint&, const QPoint&)));
 	connect(ui.myButtonShowAlpha, SIGNAL(clicked(bool)), this, SLOT(onButtonAlpha(bool)));
 	connect(ui.mySliderAlphaValue, SIGNAL(sliderMoved(int)), this, SLOT(onSliderValueChanged(int)));
+	
 
 	myStatusLabel = new QLabel(ui.statusBar);
 
@@ -60,6 +61,17 @@ void AlphaPaint::openFile()
 	}
 	
 	//myImage.load(fileName);
+}
+
+void AlphaPaint::keyReleaseEvent(QKeyEvent* event)
+{
+	QMainWindow::keyReleaseEvent(event);
+
+	if (event->key() == 'S' || event->key() == 's')
+	{
+		ui.myButtonShowAlpha->setChecked(!ui.myButtonShowAlpha->isChecked());
+		affectPixmap(ui.myButtonShowAlpha->isChecked());
+	}
 }
 
 void AlphaPaint::onMouseDragged(const QPointF& offset)
