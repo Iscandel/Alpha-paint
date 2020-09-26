@@ -45,8 +45,6 @@ void ImageLabel::paintEvent(QPaintEvent* event)
 		painter.scale(myScale, myScale);
 
 		painter.drawPixmap(0, 0, *pixmap());
-		//painter.setPen(QColor(128, 128, 128));
-		//painter.drawRect(myStartX, myStartY, myEndX - myStartX, myEndY - myStartY);
 	}
 }
 
@@ -55,7 +53,6 @@ void ImageLabel::paintEvent(QPaintEvent* event)
 void ImageLabel::mousePressEvent(QMouseEvent* event)
 {
 	myButtonPressed = event->button();
-	//myFirstMousePos = event->pos();
 
 	if (event->button() == Qt::LeftButton)
 	{
@@ -74,8 +71,6 @@ void ImageLabel::mousePressEvent(QMouseEvent* event)
 ///////////////////////////////////////////////////////////////////////////////
 void ImageLabel::mouseReleaseEvent(QMouseEvent *event)
 {
-	//myPixmapOffset = QPoint();
-
 	myButtonPressed = Qt::NoButton;
 }
 
@@ -100,16 +95,19 @@ void ImageLabel::mouseMoveEvent(QMouseEvent* event)
 	}
 	else if (pixmap())
 	{
-		//QPoint pos(event->pos().x() * (1. / myScale), event->pos().y() * (1. / myScale));
 		emit signalMouseMoved(posToImagePos(event->pos()));
 	}
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 QPoint ImageLabel::posToImagePos(const QPoint& pos)
 {
 	return QPoint(pos.x() * (1. / myScale), pos.y() * (1. / myScale));
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void ImageLabel::wheelEvent(QWheelEvent * event)
 {
 		double normalizedValue = (event->delta() / 120.); //To get the minimal stepsize in [-1, 1]
@@ -126,11 +124,4 @@ void ImageLabel::wheelEvent(QWheelEvent * event)
 		adjustSize();
 		update();
 		repaint();
-		//real startX = ratio * (0 - event->x()) + event->x();
-		//real endX = ratio * (pixmap()->width() - event->x()) + event->x();
-		//real startY = ratio * (0 - event->y()) + event->y();
-		//real endY = ratio * (pixmap()->height() - event->y()) + event->y();
-
-		//emit signalRightButtonDrawFractal(startX, startY, endX, endY, myAngle);
-
 }

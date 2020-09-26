@@ -15,24 +15,19 @@ AlphaPaint::AlphaPaint(QWidget *parent)
 	ui.scrollArea->verticalScrollBar()->installEventFilter(this);
 	ui.scrollArea->horizontalScrollBar()->installEventFilter(this);
 
-	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
-	connect(ui.myLabelImage, SIGNAL(signalMouseDragged(const QPointF&)), this, SLOT(onMouseDragged(const QPointF&)));
-	connect(ui.myLabelImage, SIGNAL(signalMouseMoved(const QPoint&)), this, SLOT(onMouseMoved(const QPoint&)));
-	connect(ui.myLabelImage, SIGNAL(signalMousePaint(const QPoint&, const QPoint&)), this, SLOT(onMousePaint(const QPoint&, const QPoint&)));
-	connect(ui.myButtonShowAlpha, SIGNAL(clicked(bool)), this, SLOT(onButtonAlpha(bool)));
-	connect(ui.mySliderAlphaValue, SIGNAL(sliderMoved(int)), this, SLOT(onSliderValueChanged(int)));
+	connect(ui.actionOpen, &QAction::triggered, this, &AlphaPaint::openFile);
+	connect(ui.actionSave, &QAction::triggered, this, &AlphaPaint::saveFile);
+	connect(ui.myLabelImage, &ImageLabel::signalMouseDragged, this, &AlphaPaint::onMouseDragged);
+	connect(ui.myLabelImage, &ImageLabel::signalMouseMoved, this, &AlphaPaint::onMouseMoved);
+	connect(ui.myLabelImage, &ImageLabel::signalMousePaint, this, &AlphaPaint::onMousePaint);
+	connect(ui.myButtonShowAlpha, &QPushButton::clicked, this, &AlphaPaint::onButtonAlpha);
+	connect(ui.mySliderAlphaValue, &QSlider::sliderMoved, this, &AlphaPaint::onSliderValueChanged);
 	
-
 	myStatusLabel = new QLabel(ui.statusBar);
-
-	//myProgress = ProgressDialog::ptr(new ProgressDialog);
-
-
-	////QCheckBox* checkDragMode = new QCheckBox(ui.statusBar);
-	////ui.mainToolBar->addWidget(checkDragMode);
-	//connect(ui.actionDrag_mode, SIGNAL(toggled(bool)), this, SLOT(changeDragMode()));
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 bool AlphaPaint::eventFilter(QObject* object, QEvent* event)
 {
 	if (object == ui.scrollArea->verticalScrollBar() && event->type() == QEvent::Wheel) {
@@ -45,6 +40,8 @@ bool AlphaPaint::eventFilter(QObject* object, QEvent* event)
 	return false;
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void AlphaPaint::openFile()
 {
 	QString fileName = QFileDialog::getOpenFileName(this,
@@ -54,15 +51,26 @@ void AlphaPaint::openFile()
 	{
 		myImage.load(fileName);
 		myImage.convertToFormat(QImage::Format_ARGB32);
-		//QPixmap pixmap(fileName);
+		
 		ui.myLabelImage->setPixmap(QPixmap::fromImage(myImage));
 		ui.myLabelImage->adjustSize();
 		ui.myLabelImage->reset();
 	}
-	
-	//myImage.load(fileName);
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
+void AlphaPaint::saveFile()
+{
+	QString fileName = QFileDialog::getSaveFileName(this,
+		tr("Save image"), "",
+		tr("JPG (*.jpg);;PNG (*.png);;JPEG(*.jpeg);;BMP(*.bmp);;All Files (*)"));
+
+	bool saved = ui.myLabelImage->pixmap()->save(fileName);
+}
+
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void AlphaPaint::keyReleaseEvent(QKeyEvent* event)
 {
 	QMainWindow::keyReleaseEvent(event);
@@ -74,6 +82,8 @@ void AlphaPaint::keyReleaseEvent(QKeyEvent* event)
 	}
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void AlphaPaint::onMouseDragged(const QPointF& offset)
 {
 	auto hVal = ui.scrollArea->horizontalScrollBar()->value();
@@ -83,13 +93,12 @@ void AlphaPaint::onMouseDragged(const QPointF& offset)
 	ui.scrollArea->verticalScrollBar()->setValue(vVal + offset.y());
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void AlphaPaint::onMouseMoved(const QPoint& pos)
 {
-	//const QPixmap* pix = ui.myLabelImage->pixmap();
-
 	if (myImage.rect().contains(pos))
 	{			
-		//QImage image = pix->toImage();
 		QRgb rgba = myImage.pixel(pos);
 		int alpha = qAlpha(rgba);
 		std::ostringstream oss;
@@ -99,12 +108,12 @@ void AlphaPaint::onMouseMoved(const QPoint& pos)
 	}
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void AlphaPaint::onMousePaint(const QPoint& oldPos, const QPoint& pos)
 {
 	if (myImage.rect().contains(pos))
 	{
-		//QImage alphaImg = myImage.alphaChannel();
-		//QImage image = pix->toImage();
 		QRgb rgba = myImage.pixel(pos);
 		int alpha = ui.mySliderAlphaValue->value();
 		QPainter painter(&myImage);
@@ -117,37 +126,28 @@ void AlphaPaint::onMousePaint(const QPoint& oldPos, const QPoint& pos)
 		pen.setWidth(ui.mySpinPenThickness->value());
 		painter.setPen(pen);
 		painter.drawLine(oldPos, pos);
-		std::cout << oldPos.x() << " " << oldPos.y() << " " << pos.x() << " " << pos.y() << std::endl;
-		myImage.setPixel(pos, newRgba);
 
-		//myImage.setAlphaChannel(alphaImg);
-
-		ui.myLabelImage->repaint();
 		affectPixmap(ui.myButtonShowAlpha->isChecked());
-		//ui.myLabelImage->setPixmap(QPixmap::fromImage(myImage));
-
-		std::ostringstream oss;
-		oss << alpha;
 
 		QRgb rgba2 = myImage.pixel(pos);
-		ui.myEditAlpha->setText(QString::fromStdString(oss.str()));
+		ui.myEditAlpha->setText(QString::number(alpha));
 	}
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void AlphaPaint::onButtonAlpha(bool clicked)
 {
 	affectPixmap(clicked);
-	
-	//ui.myLabelImage->adjustSize();
-	//ui.myLabelImage->reset();
 }
 
+//=============================================================================
+///////////////////////////////////////////////////////////////////////////////
 void AlphaPaint::affectPixmap(bool alpha)
 {
 	const QPixmap* pix = ui.myLabelImage->pixmap();
 	if (alpha)
 	{
-		//QImage image = pix->toImage();
 		QImage alpha = myImage.alphaChannel();
 
 		ui.myLabelImage->setPixmap(QPixmap::fromImage(alpha));
@@ -160,11 +160,6 @@ void AlphaPaint::affectPixmap(bool alpha)
 
 void AlphaPaint::onSliderValueChanged(int value)
 {
-	//ui.mySliderAlphaValue->setStatusTip(QString::fromStdString(oss.str()));
-	//ui.mySliderAlphaValue->update();
-	//ui.mySliderAlphaValue->repaint();
-	//ui.statusBar->setStatusTip(QString::fromStdString(oss.str()));
-	//ui.statusBar->repaint();
 	myStatusLabel->setText(QString::number(value));
 	myStatusLabel->repaint();
 }
