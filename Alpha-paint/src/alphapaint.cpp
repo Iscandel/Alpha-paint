@@ -12,8 +12,8 @@ AlphaPaint::AlphaPaint(QWidget *parent)
 	//ui.scrollArea->verticalScrollBar()->blockSignals(true);
 	//ui.scrollArea->horizontalScrollBar()->blockSignals(true);
 
-	//ui.scrollArea->verticalScrollBar()->installEventFilter(this);
-	//ui.scrollArea->horizontalScrollBar()->installEventFilter(this);
+	ui.scrollArea->verticalScrollBar()->installEventFilter(this);
+	ui.scrollArea->horizontalScrollBar()->installEventFilter(this);
 
 	connect(ui.actionOpen, SIGNAL(triggered()), this, SLOT(openFile()));
 	connect(ui.myLabelImage, SIGNAL(signalMouseDragged(const QPointF&)), this, SLOT(onMouseDragged(const QPointF&)));
@@ -33,17 +33,17 @@ AlphaPaint::AlphaPaint(QWidget *parent)
 	//connect(ui.actionDrag_mode, SIGNAL(toggled(bool)), this, SLOT(changeDragMode()));
 }
 
-//bool AlphaPaint::eventFilter(QObject* object, QEvent* event)
-//{
-//	if (object == ui.scrollArea->verticalScrollBar() && event->type() == QEvent::Wheel) {
-//		return true;
-//	}
-//	if (object == ui.scrollArea->horizontalScrollBar() && event->type() == QEvent::Wheel) {
-//		return true;
-//	}
-//
-//	return false;
-//}
+bool AlphaPaint::eventFilter(QObject* object, QEvent* event)
+{
+	if (object == ui.scrollArea->verticalScrollBar() && event->type() == QEvent::Wheel) {
+		return true;
+	}
+	if (object == ui.scrollArea->horizontalScrollBar() && event->type() == QEvent::Wheel) {
+		return true;
+	}
+
+	return false;
+}
 
 void AlphaPaint::openFile()
 {

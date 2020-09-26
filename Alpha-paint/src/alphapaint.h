@@ -14,9 +14,8 @@ public:
 
 	void affectPixmap(bool alpha);
 
-	//bool eventFilter(QObject* object, QEvent* event);
-
 protected:
+	bool eventFilter(QObject* object, QEvent* event) override;
 	void keyReleaseEvent(QKeyEvent* event) override;
 
 public slots:
