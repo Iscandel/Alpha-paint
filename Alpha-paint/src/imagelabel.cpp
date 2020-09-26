@@ -12,7 +12,7 @@ ImageLabel::ImageLabel(QWidget *parent)
 , myInitialSizeY(0)
 {
 	ui.setupUi(this);
-	//NB mouseMoveEvent is only called if a mouse button is pressed (see MouseTracking to change the behaviour)
+	//NB Enable mouse tracking to get mouse move events
 	setMouseTracking(true);
 }
 
@@ -61,6 +61,11 @@ void ImageLabel::mousePressEvent(QMouseEvent* event)
 	{
 		myLastMousePos = event->screenPos();
 	}
+	else if (event->button() == Qt::RightButton)
+	{
+		myLastRightMousePos = event->pos();
+		emit signalMousePaint(posToImagePos(myLastRightMousePos), posToImagePos(event->pos()));
+	}
 
 	repaint();
 }
@@ -88,11 +93,23 @@ void ImageLabel::mouseMoveEvent(QMouseEvent* event)
 		myLastMousePos = event->screenPos();
 		repaint();
 	}
+	else if (myButtonPressed == Qt::RightButton)
+	{
+		myLastRightMousePos = event->pos();
+		emit signalMousePaint(posToImagePos(myLastRightMousePos), posToImagePos(event->pos()));
+
+		repaint();
+	}
 	else if (pixmap())
 	{
-		QPoint pos(event->pos().x() * (1. / myScale), event->pos().y() * (1. / myScale));
-		emit signalMouseMoved(pos);
+		//QPoint pos(event->pos().x() * (1. / myScale), event->pos().y() * (1. / myScale));
+		emit signalMouseMoved(posToImagePos(event->pos()));
 	}
+}
+
+QPoint ImageLabel::posToImagePos(const QPoint& pos)
+{
+	return QPoint(pos.x() * (1. / myScale), pos.y() * (1. / myScale));
 }
 
 void ImageLabel::wheelEvent(QWheelEvent * event)

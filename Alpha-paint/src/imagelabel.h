@@ -21,11 +21,14 @@ public:
 
 	void mouseMoveEvent(QMouseEvent* event) override;
 
+	QPoint posToImagePos(const QPoint& pos);
+
 	void reset();
 
 signals:
 	void signalMouseDragged(const QPointF& offset);
 	void signalMouseMoved(const QPoint& pos);
+	void signalMousePaint(const QPoint& oldPos, const QPoint& pos);
 
 protected:
 	qreal myScale;
@@ -35,6 +38,7 @@ protected:
 	Qt::MouseButton myButtonPressed;
 
 	QPointF myLastMousePos;
+	QPoint myLastRightMousePos;
 	//QPoint myPixmapOffset;
 
 private:

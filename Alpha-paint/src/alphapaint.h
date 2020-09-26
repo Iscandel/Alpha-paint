@@ -18,6 +18,8 @@ public slots:
 	void openFile();
 	void onMouseDragged(const QPointF& offset);
 	void onMouseMoved(const QPoint& pos);
+	void onButtonAlpha(bool clicked);
+	void onMousePaint(const QPoint& oldPos, const QPoint& pos);
 
 private:
     Ui::AlphapaintClass ui;
