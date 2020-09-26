@@ -101,9 +101,12 @@ void AlphaPaint::onMousePaint(const QPoint& oldPos, const QPoint& pos)
 		painter.setCompositionMode(QPainter::CompositionMode::CompositionMode_Source);
 		QColor col(newRgba);
 		col.setAlpha(alpha);
-		painter.setPen(col);
+		QPen pen(col);
+		pen.setWidth(ui.mySpinPenThickness->value());
+		painter.setPen(pen);
 		painter.drawLine(oldPos, pos);
-		//myImage.setPixel(pos, newRgba);
+		std::cout << oldPos.x() << " " << oldPos.y() << " " << pos.x() << " " << pos.y() << std::endl;
+		myImage.setPixel(pos, newRgba);
 
 		//myImage.setAlphaChannel(alphaImg);
 

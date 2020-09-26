@@ -89,15 +89,13 @@ void ImageLabel::mouseMoveEvent(QMouseEvent* event)
 		QPointF pixmapOffset = myLastMousePos - event->screenPos();
 
 		emit signalMouseDragged(pixmapOffset);
-
 		myLastMousePos = event->screenPos();
 		repaint();
 	}
 	else if (myButtonPressed == Qt::RightButton)
-	{
+	{	
+		emit signalMousePaint(posToImagePos(myLastRightMousePos), posToImagePos(event->pos()));		
 		myLastRightMousePos = event->pos();
-		emit signalMousePaint(posToImagePos(myLastRightMousePos), posToImagePos(event->pos()));
-
 		repaint();
 	}
 	else if (pixmap())
